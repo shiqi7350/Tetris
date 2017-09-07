@@ -15,8 +15,7 @@ public class Node
         node = t;
     }
 
-    public void SetColor(Color c)
-    {
+    public void SetColor(Color c){
         node.GetComponent<Image>().color = c;
     }
     public void DestroyNode()
