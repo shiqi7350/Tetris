@@ -66,10 +66,14 @@ public class Block
         }
     }
 
-    public void Move(Vector3 pos)
+    public void SetPos(Vector3 pos)
     {
         central_node.SetPos(pos);
         SetBroNodePos();
+    }
+    public void SetPos(float x, float y, float z)
+    {
+        SetPos(new Vector3(x, y, z));
     }
 
     public void SetBroNodePos()
@@ -128,7 +132,20 @@ public class I_Block : Block
 public class L_Block : Block
 {
     /// <summary>
-    /// 1:竖向  2:横向
+    /// 1:  ■
+    ///     ■
+    ///     ■ ■
+    /// ——————————————————————————————————————————————————————————————————————
+    /// 2:  ■ ■ ■
+    ///     ■     
+    /// ——————————————————————————————————————————————————————————————————————
+    /// 3:  ■ ■
+    ///       ■
+    ///       ■
+    /// ——————————————————————————————————————————————————————————————————————
+    /// 4:      ■
+    ///     ■ ■ ■
+    /// ——————————————————————————————————————————————————————————————————————
     /// </summary>
     int flag = 1;
     public L_Block(Node[] nList, int type) : base()
@@ -142,25 +159,49 @@ public class L_Block : Block
 
     public void SetShape()
     {
-        if (flag == 1)//竖向
+        if (flag == 1)//
         {
             nodeList[1].offset_x = 0f;
             nodeList[2].offset_x = 0f;
-            nodeList[3].offset_x = 0f;
+            nodeList[3].offset_x = Node.node_leng;
 
             nodeList[1].offset_y = 2 * Node.node_leng;
             nodeList[2].offset_y = Node.node_leng;
-            nodeList[3].offset_y = -Node.node_leng;
+            nodeList[3].offset_y = 0;
         }
-        else if (flag == 2)//横向
+        else if (flag == 2)//
         {
-            nodeList[1].offset_x = 2 * Node.node_leng;
-            nodeList[2].offset_x = Node.node_leng;
-            nodeList[3].offset_x = -Node.node_leng;
+            nodeList[1].offset_x = Node.node_leng;
+            nodeList[2].offset_x = 2 * Node.node_leng;
+            nodeList[3].offset_x = 0f;
 
             nodeList[1].offset_y = 0f;
             nodeList[2].offset_y = 0f;
-            nodeList[3].offset_y = 0f;
+            nodeList[3].offset_y = -Node.node_leng;
+        }
+        /// ——————————————————————————————————————————————————————————————————————
+        /// 4:      ■
+        ///     ■ ■ ■
+        /// ——————————————————————————————————————————————————————————————————————
+        else if (flag == 3)//
+        {
+            nodeList[1].offset_x = -Node.node_leng;
+            nodeList[2].offset_x = 0f;
+            nodeList[3].offset_x = 0f;
+
+            nodeList[1].offset_y = 0f;
+            nodeList[2].offset_y = -Node.node_leng;
+            nodeList[3].offset_y = -2 * Node.node_leng;
+        }
+        else if (flag == 4)//
+        {
+            nodeList[1].offset_x = -2 * Node.node_leng;
+            nodeList[2].offset_x = -Node.node_leng;
+            nodeList[3].offset_x = 0f;
+
+            nodeList[1].offset_y = 0f;
+            nodeList[2].offset_y = 0f;
+            nodeList[3].offset_y = Node.node_leng;
         }
     }
 }
