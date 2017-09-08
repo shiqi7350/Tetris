@@ -17,6 +17,7 @@ public class Main : MonoBehaviour
     List<Vector3[]> vPos = new List<Vector3[]>();
 
     Block b;
+    Block b2;
     void Start()
     {
         button = transform.Find("Image").GetComponent<Button>();
@@ -27,10 +28,10 @@ public class Main : MonoBehaviour
         resBlock = transform.Find("Panel/block").gameObject;
 
         b = CreateBlock('I', 2);
-        b.SetPos(0f, 10f, 0f);
+        b.SetPos(0f, 600f, 0f);
 
-        Block b2 = CreateBlock('L', 3);
-        b2.SetPos(0f, 300f, 0f);
+        // b2 = CreateBlock('L', 3);
+        // b2.SetPos(0f, 300f, 0f);
     }
 
     Block CreateBlock(char shape_ch, int type)
@@ -40,19 +41,19 @@ public class Main : MonoBehaviour
         for (int i = 0; i < 4; i++)
         {
             GameObject o = Instantiate(resBlock);
-            o.transform.parent = transform.Find("Panel");
+            o.transform.SetParent(transform.Find("Panel"));
             o.transform.localScale = Vector3.one;
             nl[i] = new Node(o.transform);
         }
-        Block b = new Block();
+        Block tmp_b = new Block();
 
         switch (shape_ch)
         {
             case 'I':
-                b = new I_Block(nl, type);
+                tmp_b = new I_Block(nl, type);
                 break;
             case 'L':
-                b = new L_Block(nl, type);
+                tmp_b = new L_Block(nl, type);
                 break;
             case 'J':
                 break;
@@ -65,12 +66,28 @@ public class Main : MonoBehaviour
             case 'O':
                 break;
         }
-        return b;
+        return tmp_b;
     }
 
     void Update()
     {
         b.SetBroNodePos();
+        float xxtmp = b.GetLowPos().y;
+        if (xxtmp > -500f)
+        {
+            Block_Down(b, 100f * Time.deltaTime);
+        }
+        else
+        {
+            b = CreateBlock('L', 3);
+            b.SetPos(0f, 600f, 0f);
+        }
+
+    }
+
+    void Block_Down(Block curB, float speed)
+    {
+        curB.central_node.Drop(speed);
     }
 
     void OnClick(GameObject o) { }

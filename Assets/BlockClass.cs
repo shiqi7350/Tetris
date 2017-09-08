@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Node
 {
-    public static float node_leng = 70f;
+    public static float node_leng = 50f;
     Transform node;
     public float offset_x = 0f;
     public float offset_y = 0f;
@@ -15,7 +15,8 @@ public class Node
         node = t;
     }
 
-    public void SetColor(Color c){
+    public void SetColor(Color c)
+    {
         node.GetComponent<Image>().color = c;
     }
     public void DestroyNode()
@@ -43,7 +44,7 @@ public class Node
     {
         float x = node.localPosition.x;
         float y = node.localPosition.y;
-        node.localPosition = new Vector3(x, y + speed, 0f);
+        node.localPosition = new Vector3(x, y - speed, 0f);
     }
 }
 
@@ -74,6 +75,10 @@ public class Block
     {
         SetPos(new Vector3(x, y, z));
     }
+    public virtual Vector3 GetLowPos() //抽象方法
+    {
+        return Vector3.zero;
+    }
 
     public void SetBroNodePos()
     {
@@ -101,6 +106,18 @@ public class I_Block : Block
         central_node = nodeList[0];
         SetShape();
         SetBroNodePos();
+    }
+
+    public override Vector3 GetLowPos()
+    {
+        if (flag == 1)
+        {
+            return nodeList[3].GetPos() + new Vector3(0f, -Node.node_leng / 2, 0f);
+        }
+        else
+        {
+            return nodeList[0].GetPos() + new Vector3(Node.node_leng / 2, -Node.node_leng, 0f);
+        }
     }
 
     public void SetShape()
@@ -154,6 +171,25 @@ public class L_Block : Block
         central_node = nodeList[0];
         SetShape();
         SetBroNodePos();
+    }
+    public override Vector3 GetLowPos()
+    {
+        if (flag == 1)
+        {
+            return nodeList[0].GetPos() + new Vector3(0f, -Node.node_leng / 2, 0f);
+        }
+        else if (2 == flag)
+        {
+            return nodeList[0].GetPos() + new Vector3(0f, -1.5f * Node.node_leng, 0f);
+        }
+        else if (3 == flag)
+        {
+            return nodeList[0].GetPos() + new Vector3(0f, -2.5f * Node.node_leng, 0f);
+        }
+        else
+        {
+            return nodeList[0].GetPos() + new Vector3(0f, -Node.node_leng / 2, 0f);
+        }
     }
 
     public void SetShape()
