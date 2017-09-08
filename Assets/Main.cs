@@ -14,45 +14,45 @@ public class Main : MonoBehaviour
 
     GameObject resBlock;
 
-    List<Vector3[]> vPos = new List<Vector3[]> ();
+    List<Vector3[]> vPos = new List<Vector3[]>();
 
     Block b;
-    void Start ()
+    void Start()
     {
-        button = transform.Find ("Image").GetComponent<Button> ();
-        button.onClick.AddListener (delegate ()
-        {
-            this.OnClick (button.gameObject);
-        });
-        resBlock = transform.Find ("Panel/block").gameObject;
+        button = transform.Find("Image").GetComponent<Button>();
+        button.onClick.AddListener(delegate ()
+       {
+           this.OnClick(button.gameObject);
+       });
+        resBlock = transform.Find("Panel/block").gameObject;
 
-        b = CreateBlock ('I', 2);
-        b.SetPos (0f, 10f, 0f);
+        b = CreateBlock('I', 2);
+        b.SetPos(0f, 10f, 0f);
 
-        Block b2 = CreateBlock ('L', 3);
-        b2.SetPos (0f, 300f, 0f);
+        Block b2 = CreateBlock('L', 3);
+        b2.SetPos(0f, 300f, 0f);
     }
 
-    Block CreateBlock (char shape_ch, int type)
+    Block CreateBlock(char shape_ch, int type)
     {
 
         Node[] nl = new Node[4];
         for (int i = 0; i < 4; i++)
         {
-            GameObject o = Instantiate (resBlock);
-            o.transform.parent = transform.Find ("Panel");
+            GameObject o = Instantiate(resBlock);
+            o.transform.parent = transform.Find("Panel");
             o.transform.localScale = Vector3.one;
-            nl[i] = new Node (o.transform);
+            nl[i] = new Node(o.transform);
         }
-        Block b = new Block ();
+        Block b = new Block();
 
         switch (shape_ch)
         {
             case 'I':
-                b = new I_Block (nl, type);
+                b = new I_Block(nl, type);
                 break;
             case 'L':
-                b = new L_Block (nl, type);
+                b = new L_Block(nl, type);
                 break;
             case 'J':
                 break;
@@ -68,10 +68,10 @@ public class Main : MonoBehaviour
         return b;
     }
 
-    void Update ()
+    void Update()
     {
-        b.SetBroNodePos ();
+        b.SetBroNodePos();
     }
 
-    void OnClick (GameObject o) { }
+    void OnClick(GameObject o) { }
 }
