@@ -36,7 +36,6 @@ public class Main : MonoBehaviour
 
     Block CreateBlock(char shape_ch, int type)
     {
-
         Node[] nl = new Node[4];
         for (int i = 0; i < 4; i++)
         {
@@ -82,7 +81,6 @@ public class Main : MonoBehaviour
             b = CreateBlock('L', 3);
             b.SetPos(0f, 600f, 0f);
         }
-
     }
 
     void Block_Drop(Block curB, float speed)
