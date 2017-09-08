@@ -122,7 +122,7 @@ public class I_Block : Block
 
     public void SetShape()
     {
-        if (flag == 1)//竖向
+        if (flag == 1) //竖向
         {
             nodeList[1].offset_x = 0f;
             nodeList[2].offset_x = 0f;
@@ -132,7 +132,7 @@ public class I_Block : Block
             nodeList[2].offset_y = Node.node_leng;
             nodeList[3].offset_y = -Node.node_leng;
         }
-        else if (flag == 2)//横向
+        else if (flag == 2) //横向
         {
             nodeList[1].offset_x = 2 * Node.node_leng;
             nodeList[2].offset_x = Node.node_leng;
@@ -194,7 +194,7 @@ public class L_Block : Block
 
     public void SetShape()
     {
-        if (flag == 1)//
+        if (flag == 1) //
         {
             nodeList[1].offset_x = 0f;
             nodeList[2].offset_x = 0f;
@@ -204,7 +204,7 @@ public class L_Block : Block
             nodeList[2].offset_y = Node.node_leng;
             nodeList[3].offset_y = 0;
         }
-        else if (flag == 2)//
+        else if (flag == 2) //
         {
             nodeList[1].offset_x = Node.node_leng;
             nodeList[2].offset_x = 2 * Node.node_leng;
@@ -218,7 +218,7 @@ public class L_Block : Block
         /// 4:      ■
         ///     ■ ■ ■
         /// ——————————————————————————————————————————————————————————————————————
-        else if (flag == 3)//
+        else if (flag == 3) //
         {
             nodeList[1].offset_x = -Node.node_leng;
             nodeList[2].offset_x = 0f;
@@ -228,7 +228,7 @@ public class L_Block : Block
             nodeList[2].offset_y = -Node.node_leng;
             nodeList[3].offset_y = -2 * Node.node_leng;
         }
-        else if (flag == 4)//
+        else if (flag == 4) //
         {
             nodeList[1].offset_x = -2 * Node.node_leng;
             nodeList[2].offset_x = -Node.node_leng;
@@ -241,17 +241,12 @@ public class L_Block : Block
     }
 }
 
-public class J_Block : Block
-{ }
+public class J_Block : Block { }
 
-public class O_Block : Block
-{ }
+public class O_Block : Block { }
 
-public class T_Block : Block
-{ }
+public class T_Block : Block { }
 
-public class S_Block : Block
-{ }
+public class S_Block : Block { }
 
-public class Z_Block : Block
-{ }
+public class Z_Block : Block { }

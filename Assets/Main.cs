@@ -21,10 +21,10 @@ public class Main : MonoBehaviour
     void Start()
     {
         button = transform.Find("Image").GetComponent<Button>();
-        button.onClick.AddListener(delegate ()
-       {
-           this.OnClick(button.gameObject);
-       });
+        button.onClick.AddListener(delegate()
+        {
+            this.OnClick(button.gameObject);
+        });
         resBlock = transform.Find("Panel/block").gameObject;
 
         b = CreateBlock('I', 2);
@@ -75,7 +75,7 @@ public class Main : MonoBehaviour
         float xxtmp = b.GetLowPos().y;
         if (xxtmp > -500f)
         {
-            Block_Down(b, 100f * Time.deltaTime);
+            Block_Drop(b, 100f * Time.deltaTime);
         }
         else
         {
@@ -85,7 +85,7 @@ public class Main : MonoBehaviour
 
     }
 
-    void Block_Down(Block curB, float speed)
+    void Block_Drop(Block curB, float speed)
     {
         curB.central_node.Drop(speed);
     }
