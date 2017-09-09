@@ -70,6 +70,7 @@ public class Main : MonoBehaviour
 
     void Update()
     {
+        
         b.SetBroNodePos();
         float xxtmp = b.GetLowPos().y;
         if (xxtmp > -500f)
