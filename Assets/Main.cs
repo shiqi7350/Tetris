@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class Main : MonoBehaviour
 {
     Button button;
-    float drop_speed = 200f;
+    float drop_speed = 500f;
 
     Transform[] t_child;
 
@@ -29,7 +29,7 @@ public class Main : MonoBehaviour
         resBlock = transform.Find("Panel/block").gameObject;
 
         b = CreateBlock('I', 2);
-        b.SetPos(0f, 600f, 0f);
+        b.SetPos(new Vector3(0f, 600f, 0f));
 
         // b2 = CreateBlock('L', 3);
         // b2.SetPos(0f, 300f, 0f);
@@ -78,18 +78,30 @@ public class Main : MonoBehaviour
 
     void Update()
     {
-
-        b.SetBroNodePos();
-        float xxtmp = b.GetLowPos().y;
-        if (xxtmp > -500f)
+        if (b.GetPos().y > -530f)
         {
-            Block_Drop(b, 100f * Time.deltaTime);
+            Block_Drop(b, drop_speed * Time.deltaTime);
         }
         else
         {
-            b = CreateBlock('L', 3);
-            b.SetPos(0f, 600f, 0f);
+            float xv = b.GetPos().x;
+            b.SetPos(new Vector3(xv, -530f, 0f));
+            char[] sc = new char[2] { 'L', 'I' };
+            int rNum = Random.Range(0, sc.Length);
+            int rType = 0;
+            if (sc[rNum] == 'L')
+            {
+                rType = Random.Range(1, 5);
+            }
+            else if (sc[rNum] == 'I')
+            {
+                rType = Random.Range(1, 3);
+            }
+            b = CreateBlock('L', 1); //sc[rNum], rType);
+            b.SetColor(Random.Range(1, 8));
+            b.SetPos(new Vector3(0f, 600f, 0f));
         }
+
     }
 
     void Block_Drop(Block curB, float speed)

@@ -5,19 +5,18 @@ using UnityEngine.UI;
 
 public class Node
 {
-    public static float node_leng = 50f;
+    public static float leng = 50f;
     Transform node;
-    public float offset_x = 0f;
-    public float offset_y = 0f;
 
     public Node(Transform t)
     {
         node = t;
+        node.gameObject.name = "Node";
     }
 
-    public void SetColor(Color c)
+    public void SetColor(int color)
     {
-        node.GetComponent<Image>().color = c;
+        node.GetComponent<Image>().sprite = Resources.Load("0" + color, typeof (Sprite)) as Sprite;;
     }
     public void DestroyNode()
     {
@@ -51,42 +50,30 @@ public class Node
 public class Block
 {
     public Node[] nodeList;
-    public Node central_node;
 
     public Block()
     {
         nodeList = new Node[4];
     }
 
-    public void SetColor(Color c)
+    public void SetColor(int color)
     {
         for (int i = 0; i < nodeList.Length; i++)
         {
-            nodeList[i].SetColor(c);
+            nodeList[i].SetColor(color);
         }
     }
 
-    public void SetPos(Vector3 pos)
+    public virtual void SetPos(Vector3 v) { }
+
+    public virtual Vector3 GetPos()
     {
-        central_node.SetPos(pos);
-        SetBroNodePos();
+        return Vector3.zero;
     }
-    public void SetPos(float x, float y, float z)
-    {
-        SetPos(new Vector3(x, y, z));
-    }
+
     public virtual List<float> GetLowPos_Y() //抽象方法
     {
         return null;
-    }
-
-    public void SetBroNodePos()
-    {
-        Vector3 cPos = central_node.GetPos();
-        for (int i = 1; i <= 3; i++)
-        {
-            nodeList[i].SetPos(new Vector3(cPos.x + nodeList[i].offset_x, cPos.y + nodeList[i].offset_y, 0f));
-        }
     }
 }
 
@@ -97,15 +84,47 @@ public class I_Block : Block
 {
     /// <summary>
     /// 1:竖向  2:横向
+    /// 
+    /// ■
+    /// ■
+    /// ■
+    /// ■o
     /// </summary>
     int flag = 1;
     public I_Block(Node[] nList, int type) : base()
     {
         flag = type;
         nodeList = nList;
-        central_node = nodeList[0];
-        SetShape();
-        SetBroNodePos();
+    }
+
+    public override void SetPos(Vector3 v)
+    {
+        if (flag == 1)
+        {
+            nodeList[0].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 3.5f, 0f));
+            nodeList[1].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 2.5f, 0f));
+            nodeList[2].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 1.5f, 0f));
+            nodeList[3].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+        }
+        else if (flag == 2)
+        {
+            nodeList[0].SetPos(new Vector3(v.x - Node.leng * 1.5f, v.y + Node.leng * 0.5f, 0f));
+            nodeList[1].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            nodeList[2].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            nodeList[3].SetPos(new Vector3(v.x + Node.leng * 1.5f, v.y + Node.leng * 0.5f, 0f));
+        }
+    }
+    public override Vector3 GetPos()
+    {
+        if (flag == 1)
+        {
+            return nodeList[3].GetPos() + new Vector3(Node.leng * 0.5f, -Node.leng * 0.5f, 0f);
+        }
+        else if (flag == 2)
+        {
+            return nodeList[1].GetPos() + new Vector3(Node.leng * 0.5f, -Node.leng * 0.5f, 0f);
+        }
+        return Vector3.zero;
     }
 
     public override List<float> GetLowPos_Y()
@@ -113,40 +132,16 @@ public class I_Block : Block
         List<float> low_y = new List<float>();
         if (flag == 1)
         {
-            low_y.Add(nodeList[3].GetPos().y - Node.node_leng / 2);
+            low_y.Add(nodeList[3].GetPos().y - Node.leng / 2);
         }
         else
         {
             for (int i = 0; i < 4; i++)
             {
-                low_y.Add(nodeList[i].GetPos().y - Node.node_leng / 2);
+                low_y.Add(nodeList[i].GetPos().y - Node.leng / 2);
             }
         }
         return low_y;
-    }
-
-    public void SetShape()
-    {
-        if (flag == 1) //竖向
-        {
-            nodeList[1].offset_x = 0f;
-            nodeList[2].offset_x = 0f;
-            nodeList[3].offset_x = 0f;
-
-            nodeList[1].offset_y = 2 * Node.node_leng;
-            nodeList[2].offset_y = Node.node_leng;
-            nodeList[3].offset_y = -Node.node_leng;
-        }
-        else if (flag == 2) //横向
-        {
-            nodeList[1].offset_x = 2 * Node.node_leng;
-            nodeList[2].offset_x = Node.node_leng;
-            nodeList[3].offset_x = -Node.node_leng;
-
-            nodeList[1].offset_y = 0f;
-            nodeList[2].offset_y = 0f;
-            nodeList[3].offset_y = 0f;
-        }
     }
 }
 
@@ -155,17 +150,17 @@ public class L_Block : Block
     /// <summary>
     /// 1:  ■
     ///     ■
-    ///     ■ ■
+    ///     ■o■
     /// ——————————————————————————————————————————————————————————————————————
     /// 2:  ■ ■ ■
-    ///     ■     
+    ///     ■o     
     /// ——————————————————————————————————————————————————————————————————————
     /// 3:  ■ ■
     ///       ■
-    ///       ■
+    ///      o■
     /// ——————————————————————————————————————————————————————————————————————
     /// 4:      ■
-    ///     ■ ■ ■
+    ///     ■o■ ■
     /// ——————————————————————————————————————————————————————————————————————
     /// </summary>
     int flag = 1;
@@ -173,78 +168,88 @@ public class L_Block : Block
     {
         flag = type;
         nodeList = nList;
-        central_node = nodeList[0];
-        SetShape();
-        SetBroNodePos();
     }
+    public override void SetPos(Vector3 v)
+    {
+        if (flag == 1)
+        {
+            nodeList[0].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + 2.5f * Node.leng, 0f));
+            nodeList[1].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + 1.5f * Node.leng, 0f));
+            nodeList[2].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + 0.5f * Node.leng, 0f));
+            nodeList[3].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y + 0.5f * Node.leng, 0f));
+        }
+        else if (flag == 2)
+        {
+            nodeList[0].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 1.5f, 0f));
+            nodeList[1].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 1.5f, 0f));
+            nodeList[2].SetPos(new Vector3(v.x + Node.leng * 1.5f, v.y + Node.leng * 1.5f, 0f));
+            nodeList[3].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+        }
+        else if (flag == 3)
+        {
+            nodeList[0].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 2.5f, 0f));
+            nodeList[1].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 2.5f, 0f));
+            nodeList[2].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 1.5f, 0f));
+            nodeList[3].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+        }
+        else if (flag == 4)
+        {
+            nodeList[0].SetPos(new Vector3(v.x + Node.leng * 1.5f, v.y + Node.leng * 1.5f, 0f));
+            nodeList[1].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            nodeList[2].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            nodeList[3].SetPos(new Vector3(v.x + Node.leng * 1.5f, v.y + Node.leng * 0.5f, 0f));
+        }
+    }
+
+    public override Vector3 GetPos()
+    {
+        Vector3 v = nodeList[3].GetPos();
+        float offs = 0f;
+        if (flag == 1)
+        {
+            offs = -0.5f;
+        }
+        else if (flag == 2)
+        {
+            offs = 0.5f;
+        }
+        else if (flag == 3)
+        {
+            offs = -0.5f;
+        }
+        else if (flag == 4)
+        {
+            offs = -1.5f;
+        }
+        return v + new Vector3(offs * Node.leng, -0.5f * Node.leng, 0f);
+    }
+
     public override List<float> GetLowPos_Y()
     {
-
         List<float> low_y = new List<float>();
         if (flag == 1)
         {
-            return nodeList[0].GetPos() + new Vector3(0f, -Node.node_leng / 2, 0f);
+            low_y.Add(nodeList[2].GetPos().y - Node.leng / 2);
+            low_y.Add(nodeList[3].GetPos().y - Node.leng / 2);
         }
-        else if (2 == flag)
+        else if (flag == 2)
         {
-            return nodeList[0].GetPos() + new Vector3(0f, -1.5f * Node.node_leng, 0f);
+            low_y.Add(nodeList[3].GetPos().y - Node.leng / 2);
+            low_y.Add(nodeList[1].GetPos().y - Node.leng / 2);
+            low_y.Add(nodeList[2].GetPos().y - Node.leng / 2);
         }
-        else if (3 == flag)
+        else if (flag == 3)
         {
-            return nodeList[0].GetPos() + new Vector3(0f, -2.5f * Node.node_leng, 0f);
+            low_y.Add(nodeList[0].GetPos().y - Node.leng / 2);
+            low_y.Add(nodeList[3].GetPos().y - Node.leng / 2);
         }
-        else
+        else if (flag == 4)
         {
-            return nodeList[0].GetPos() + new Vector3(0f, -Node.node_leng / 2, 0f);
+            low_y.Add(nodeList[1].GetPos().y - Node.leng / 2);
+            low_y.Add(nodeList[2].GetPos().y - Node.leng / 2);
+            low_y.Add(nodeList[3].GetPos().y - Node.leng / 2);
         }
-    }
-
-    public void SetShape()
-    {
-        if (flag == 1) //
-        {
-            nodeList[1].offset_x = 0f;
-            nodeList[2].offset_x = 0f;
-            nodeList[3].offset_x = Node.node_leng;
-
-            nodeList[1].offset_y = 2 * Node.node_leng;
-            nodeList[2].offset_y = Node.node_leng;
-            nodeList[3].offset_y = 0;
-        }
-        else if (flag == 2) //
-        {
-            nodeList[1].offset_x = Node.node_leng;
-            nodeList[2].offset_x = 2 * Node.node_leng;
-            nodeList[3].offset_x = 0f;
-
-            nodeList[1].offset_y = 0f;
-            nodeList[2].offset_y = 0f;
-            nodeList[3].offset_y = -Node.node_leng;
-        }
-        /// ——————————————————————————————————————————————————————————————————————
-        /// 4:      ■
-        ///     ■ ■ ■
-        /// ——————————————————————————————————————————————————————————————————————
-        else if (flag == 3) //
-        {
-            nodeList[1].offset_x = -Node.node_leng;
-            nodeList[2].offset_x = 0f;
-            nodeList[3].offset_x = 0f;
-
-            nodeList[1].offset_y = 0f;
-            nodeList[2].offset_y = -Node.node_leng;
-            nodeList[3].offset_y = -2 * Node.node_leng;
-        }
-        else if (flag == 4) //
-        {
-            nodeList[1].offset_x = -2 * Node.node_leng;
-            nodeList[2].offset_x = -Node.node_leng;
-            nodeList[3].offset_x = 0f;
-
-            nodeList[1].offset_y = 0f;
-            nodeList[2].offset_y = 0f;
-            nodeList[3].offset_y = Node.node_leng;
-        }
+        return low_y;
     }
 }
 
