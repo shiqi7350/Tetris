@@ -18,21 +18,17 @@ public class Main : MonoBehaviour
     List<Vector3[]> vPos = new List<Vector3[]>();
 
     Block b;
-    Block b2;
     void Start()
     {
-        button = transform.Find("Image").GetComponent<Button>();
+        button = transform.Find("Btn_Rotate").GetComponent<Button>();
         button.onClick.AddListener(delegate()
         {
             this.OnClick(button.gameObject);
         });
         resBlock = transform.Find("Panel/block").gameObject;
 
-        b = CreateBlock('I', 2);
-        b.SetPos(new Vector3(0f, 600f, 0f));
+        CreateRandomBlock();
 
-        // b2 = CreateBlock('L', 3);
-        // b2.SetPos(0f, 300f, 0f);
     }
 
     Block CreateBlock(char shape_ch, int type)
@@ -78,30 +74,56 @@ public class Main : MonoBehaviour
 
     void Update()
     {
-        if (b.GetPos().y > -530f)
+        if (b.IsDropEnd(-531f)) //b.GetPos().y > -531f)
         {
-            Block_Drop(b, drop_speed * Time.deltaTime);
+            Vector3 v = b.GetPos();
+            float xv = v.x;
+            float yv = v.y;
+            float dis_all = Mathf.Abs(yv + 530f);
+            int div_yv = (int)(dis_all / (Node.leng * 0.5f)) + 1;
+
+            if (div_yv == 1) div_yv = 0;
+
+            b.SetShape(new Vector3(xv, -530f + (div_yv * Node.leng * 0.5f), 0f));
+
+            List<float> lf = b.GetLowPos_Y();
+            for (int i = 0; i < lf.Count; i++)
+            {
+                if (lf[i] < -530f)
+                {
+                    v = b.GetPos();
+                    xv = v.x;
+                    yv = v.y;
+                    b.SetShape(new Vector3(xv, yv - 530f - lf[i], 0f));
+                }
+            }
+            CreateRandomBlock();
         }
         else
         {
-            float xv = b.GetPos().x;
-            b.SetPos(new Vector3(xv, -530f, 0f));
-            char[] sc = new char[2] { 'L', 'I' };
-            int rNum = Random.Range(0, sc.Length);
-            int rType = 0;
-            if (sc[rNum] == 'L')
-            {
-                rType = Random.Range(1, 5);
-            }
-            else if (sc[rNum] == 'I')
-            {
-                rType = Random.Range(1, 3);
-            }
-            b = CreateBlock('L', 1); //sc[rNum], rType);
-            b.SetColor(Random.Range(1, 8));
-            b.SetPos(new Vector3(0f, 600f, 0f));
+            Block_Drop(b, drop_speed * Time.deltaTime);
         }
+    }
 
+    /// <summary>
+    /// 创建随机的 块
+    /// </summary>
+    void CreateRandomBlock()
+    {
+        char[] sc = new char[2] { 'L', 'I' };
+        int rNum = Random.Range(0, sc.Length);
+        int rType = 0;
+        if (sc[rNum] == 'L')
+        {
+            rType = Random.Range(1, 5);
+        }
+        else if (sc[rNum] == 'I')
+        {
+            rType = Random.Range(1, 3);
+        }
+        b = CreateBlock(sc[rNum], rType);
+        b.SetColor(Random.Range(1, 8));
+        b.SetShape(new Vector3(0f, 600f, 0f));
     }
 
     void Block_Drop(Block curB, float speed)
@@ -110,13 +132,18 @@ public class Main : MonoBehaviour
         {
             curB.nodeList[i].Drop(speed);
         }
-        // curB.central_node.Drop(speed);
     }
 
     void OnClick(GameObject o)
     {
         //旋转 （全都是 顺时针旋转）
-
+        Vector3 central_point = b.GetPos();
+        b.flag++;
+        if (b.flag > b.maxFlag)
+        {
+            b.flag = 1;
+        }
+        b.SetShape(central_point);
     }
 
 }

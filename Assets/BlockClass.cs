@@ -49,6 +49,8 @@ public class Node
 
 public class Block
 {
+    public int flag = 1;
+    public int maxFlag = 1;
     public Node[] nodeList;
 
     public Block()
@@ -64,7 +66,7 @@ public class Block
         }
     }
 
-    public virtual void SetPos(Vector3 v) { }
+    public virtual void SetShape(Vector3 v) { }
 
     public virtual Vector3 GetPos()
     {
@@ -75,6 +77,18 @@ public class Block
     {
         return null;
     }
+    public bool IsDropEnd(float line)
+    {
+        List<float> lowList = GetLowPos_Y();
+        for (int i = 0; i < lowList.Count; i++)
+        {
+            if (lowList[i] <= line)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 /// <summary>
@@ -84,27 +98,39 @@ public class I_Block : Block
 {
     /// <summary>
     /// 1:竖向  2:横向
-    /// 
     /// ■
     /// ■
     /// ■
-    /// ■o
+    /// ■
     /// </summary>
-    int flag = 1;
     public I_Block(Node[] nList, int type) : base()
     {
         flag = type;
+        maxFlag = 2;
         nodeList = nList;
     }
 
-    public override void SetPos(Vector3 v)
+    public override Vector3 GetPos()
     {
         if (flag == 1)
         {
-            nodeList[0].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 3.5f, 0f));
-            nodeList[1].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 2.5f, 0f));
-            nodeList[2].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 1.5f, 0f));
-            nodeList[3].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            return nodeList[2].GetPos() + new Vector3(Node.leng * 0.5f, -Node.leng * 0.5f, 0f);
+        }
+        else if (flag == 2)
+        {
+            return nodeList[1].GetPos() + new Vector3(Node.leng * 0.5f, -Node.leng * 0.5f, 0f);
+        }
+        return Vector3.zero;
+    }
+
+    public override void SetShape(Vector3 v)
+    {
+        if (flag == 1)
+        {
+            nodeList[0].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 2.5f, 0f));
+            nodeList[1].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 1.5f, 0f));
+            nodeList[2].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            nodeList[3].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
         }
         else if (flag == 2)
         {
@@ -114,19 +140,6 @@ public class I_Block : Block
             nodeList[3].SetPos(new Vector3(v.x + Node.leng * 1.5f, v.y + Node.leng * 0.5f, 0f));
         }
     }
-    public override Vector3 GetPos()
-    {
-        if (flag == 1)
-        {
-            return nodeList[3].GetPos() + new Vector3(Node.leng * 0.5f, -Node.leng * 0.5f, 0f);
-        }
-        else if (flag == 2)
-        {
-            return nodeList[1].GetPos() + new Vector3(Node.leng * 0.5f, -Node.leng * 0.5f, 0f);
-        }
-        return Vector3.zero;
-    }
-
     public override List<float> GetLowPos_Y()
     {
         List<float> low_y = new List<float>();
@@ -150,78 +163,78 @@ public class L_Block : Block
     /// <summary>
     /// 1:  ■
     ///     ■
-    ///     ■o■
+    ///     ■ ■
     /// ——————————————————————————————————————————————————————————————————————
     /// 2:  ■ ■ ■
-    ///     ■o     
+    ///     ■     
     /// ——————————————————————————————————————————————————————————————————————
     /// 3:  ■ ■
     ///       ■
-    ///      o■
+    ///       ■
     /// ——————————————————————————————————————————————————————————————————————
     /// 4:      ■
-    ///     ■o■ ■
+    ///     ■ ■ ■
     /// ——————————————————————————————————————————————————————————————————————
     /// </summary>
-    int flag = 1;
     public L_Block(Node[] nList, int type) : base()
     {
         flag = type;
+        maxFlag = 4;
         nodeList = nList;
     }
-    public override void SetPos(Vector3 v)
+
+    public override void SetShape(Vector3 v)
     {
         if (flag == 1)
         {
-            nodeList[0].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + 2.5f * Node.leng, 0f));
-            nodeList[1].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + 1.5f * Node.leng, 0f));
-            nodeList[2].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + 0.5f * Node.leng, 0f));
-            nodeList[3].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y + 0.5f * Node.leng, 0f));
+            nodeList[0].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + 1.5f * Node.leng, 0f));
+            nodeList[1].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + 0.5f * Node.leng, 0f));
+            nodeList[2].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y - 0.5f * Node.leng, 0f));
+            nodeList[3].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y - 0.5f * Node.leng, 0f));
         }
         else if (flag == 2)
         {
-            nodeList[0].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 1.5f, 0f));
-            nodeList[1].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 1.5f, 0f));
-            nodeList[2].SetPos(new Vector3(v.x + Node.leng * 1.5f, v.y + Node.leng * 1.5f, 0f));
-            nodeList[3].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            nodeList[0].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            nodeList[1].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            nodeList[2].SetPos(new Vector3(v.x + Node.leng * 1.5f, v.y + Node.leng * 0.5f, 0f));
+            nodeList[3].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
         }
         else if (flag == 3)
         {
-            nodeList[0].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 2.5f, 0f));
-            nodeList[1].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 2.5f, 0f));
-            nodeList[2].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 1.5f, 0f));
-            nodeList[3].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            nodeList[0].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            nodeList[1].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            nodeList[2].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+            nodeList[3].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 1.5f, 0f));
         }
         else if (flag == 4)
         {
-            nodeList[0].SetPos(new Vector3(v.x + Node.leng * 1.5f, v.y + Node.leng * 1.5f, 0f));
-            nodeList[1].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
-            nodeList[2].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
-            nodeList[3].SetPos(new Vector3(v.x + Node.leng * 1.5f, v.y + Node.leng * 0.5f, 0f));
+            nodeList[0].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            nodeList[1].SetPos(new Vector3(v.x - Node.leng * 1.5f, v.y - Node.leng * 0.5f, 0f));
+            nodeList[2].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+            nodeList[3].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
         }
     }
 
     public override Vector3 GetPos()
     {
-        Vector3 v = nodeList[3].GetPos();
-        float offs = 0f;
+        Vector3 v = nodeList[0].GetPos();
         if (flag == 1)
         {
-            offs = -0.5f;
+            v = v + new Vector3(Node.leng * 0.5f, -Node.leng * 1.5f, 0f);
         }
         else if (flag == 2)
         {
-            offs = 0.5f;
+            v = v + new Vector3(Node.leng * 0.5f, -Node.leng * 0.5f, 0f);
         }
         else if (flag == 3)
         {
-            offs = -0.5f;
+            v = v + new Vector3(Node.leng * 0.5f, -Node.leng * 0.5f, 0f);
         }
         else if (flag == 4)
         {
-            offs = -1.5f;
+            v = v + new Vector3(-Node.leng * 0.5f, -Node.leng * 0.5f, 0f);
         }
-        return v + new Vector3(offs * Node.leng, -0.5f * Node.leng, 0f);
+        return v;
     }
 
     public override List<float> GetLowPos_Y()
