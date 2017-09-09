@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class Main : MonoBehaviour
 {
     Button button;
+    float drop_speed = 200f;
 
     Transform[] t_child;
 
@@ -50,19 +51,26 @@ public class Main : MonoBehaviour
         {
             case 'I':
                 tmp_b = new I_Block(nl, type);
+                t_type = 1;
                 break;
             case 'L':
                 tmp_b = new L_Block(nl, type);
+                t_type = 2;
                 break;
             case 'J':
+                t_type = 3;
                 break;
             case 'T':
+                t_type = 4;
                 break;
             case 'Z':
+                t_type = 5;
                 break;
             case 'S':
+                t_type = 6;
                 break;
             case 'O':
+                t_type = 7;
                 break;
         }
         return tmp_b;
@@ -70,7 +78,7 @@ public class Main : MonoBehaviour
 
     void Update()
     {
-        
+
         b.SetBroNodePos();
         float xxtmp = b.GetLowPos().y;
         if (xxtmp > -500f)
@@ -86,22 +94,17 @@ public class Main : MonoBehaviour
 
     void Block_Drop(Block curB, float speed)
     {
-        curB.central_node.Drop(speed);
+        for (int i = 0; i < 4; i++)
+        {
+            curB.nodeList[i].Drop(speed);
+        }
+        // curB.central_node.Drop(speed);
     }
 
-    void OnClick(GameObject o) { }
+    void OnClick(GameObject o)
+    {
+        //旋转 （全都是 顺时针旋转）
 
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-    
 }

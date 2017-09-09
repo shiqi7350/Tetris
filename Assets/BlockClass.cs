@@ -75,9 +75,9 @@ public class Block
     {
         SetPos(new Vector3(x, y, z));
     }
-    public virtual Vector3 GetLowPos() //抽象方法
+    public virtual List<float> GetLowPos_Y() //抽象方法
     {
-        return Vector3.zero;
+        return null;
     }
 
     public void SetBroNodePos()
@@ -108,16 +108,21 @@ public class I_Block : Block
         SetBroNodePos();
     }
 
-    public override Vector3 GetLowPos()
+    public override List<float> GetLowPos_Y()
     {
+        List<float> low_y = new List<float>();
         if (flag == 1)
         {
-            return nodeList[3].GetPos() + new Vector3(0f, -Node.node_leng / 2, 0f);
+            low_y.Add(nodeList[3].GetPos().y - Node.node_leng / 2);
         }
         else
         {
-            return nodeList[0].GetPos() + new Vector3(Node.node_leng / 2, -Node.node_leng, 0f);
+            for (int i = 0; i < 4; i++)
+            {
+                low_y.Add(nodeList[i].GetPos().y - Node.node_leng / 2);
+            }
         }
+        return low_y;
     }
 
     public void SetShape()
@@ -172,8 +177,10 @@ public class L_Block : Block
         SetShape();
         SetBroNodePos();
     }
-    public override Vector3 GetLowPos()
+    public override List<float> GetLowPos_Y()
     {
+
+        List<float> low_y = new List<float>();
         if (flag == 1)
         {
             return nodeList[0].GetPos() + new Vector3(0f, -Node.node_leng / 2, 0f);
