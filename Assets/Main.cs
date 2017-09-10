@@ -5,26 +5,42 @@ using UnityEngine.UI;
 
 public class Main : MonoBehaviour
 {
-    Button button;
-    float drop_speed = 500f;
+    Button button_rotate;
+    Button button_left;
+    Button button_right;
+    Button button_down;
+    float drop_speed = 200f;
+    float drop_speed_const = 200f;
 
-    Transform[] t_child;
-
-    //1,2,3,4
+    //1,2,3,4,5,6,7
     int t_type = 1;
 
     GameObject resBlock;
 
-    List<Vector3[]> vPos = new List<Vector3[]>();
-
     Block b;
     void Start()
     {
-        button = transform.Find("Btn_Rotate").GetComponent<Button>();
-        button.onClick.AddListener(delegate()
+        button_rotate = transform.Find("Btn_Rotate").GetComponent<Button>();
+        button_rotate.onClick.AddListener(delegate()
         {
-            this.OnClick(button.gameObject);
+            this.OnClick_Rotate(button_rotate.gameObject);
         });
+        button_left = transform.Find("Btn_Left").GetComponent<Button>();
+        button_left.onClick.AddListener(delegate()
+        {
+            this.OnClick_Left(button_left.gameObject);
+        });
+        button_right = transform.Find("Btn_Right").GetComponent<Button>();
+        button_right.onClick.AddListener(delegate()
+        {
+            this.OnClick_Right(button_right.gameObject);
+        });
+        button_down = transform.Find("Btn_Down").GetComponent<Button>();
+        button_down.onClick.AddListener(delegate()
+        {
+            this.OnClick_Down(button_down.gameObject);
+        });
+
         resBlock = transform.Find("Panel/block").gameObject;
 
         CreateRandomBlock();
@@ -74,29 +90,14 @@ public class Main : MonoBehaviour
 
     void Update()
     {
-        if (b.IsDropEnd(-531f)) //b.GetPos().y > -531f)
+        float lowest = b.IsDropEnd(-531f);
+        if (-1 != lowest)
         {
             Vector3 v = b.GetPos();
             float xv = v.x;
             float yv = v.y;
-            float dis_all = Mathf.Abs(yv + 530f);
-            int div_yv = (int)(dis_all / (Node.leng * 0.5f)) + 1;
-
-            if (div_yv == 1) div_yv = 0;
-
-            b.SetShape(new Vector3(xv, -530f + (div_yv * Node.leng * 0.5f), 0f));
-
-            List<float> lf = b.GetLowPos_Y();
-            for (int i = 0; i < lf.Count; i++)
-            {
-                if (lf[i] < -530f)
-                {
-                    v = b.GetPos();
-                    xv = v.x;
-                    yv = v.y;
-                    b.SetShape(new Vector3(xv, yv - 530f - lf[i], 0f));
-                }
-            }
+            b.SetShape(new Vector3(xv, yv + (-530f - lowest), 0f));
+            print("lowest = " + lowest + ", b.GetPos().y = " + b.GetPos().y);
             CreateRandomBlock();
         }
         else
@@ -124,6 +125,7 @@ public class Main : MonoBehaviour
         b = CreateBlock(sc[rNum], rType);
         b.SetColor(Random.Range(1, 8));
         b.SetShape(new Vector3(0f, 600f, 0f));
+        drop_speed = drop_speed_const;
     }
 
     void Block_Drop(Block curB, float speed)
@@ -134,7 +136,7 @@ public class Main : MonoBehaviour
         }
     }
 
-    void OnClick(GameObject o)
+    void OnClick_Rotate(GameObject o)
     {
         //旋转 （全都是 顺时针旋转）
         Vector3 central_point = b.GetPos();
@@ -145,5 +147,20 @@ public class Main : MonoBehaviour
         }
         b.SetShape(central_point);
     }
-
+    void OnClick_Left(GameObject o)
+    {
+        Vector3 v = b.GetPos();
+        // if(v.x == )
+        b.SetShape(new Vector3(v.x - Node.leng, v.y, 0f));
+    }
+    void OnClick_Right(GameObject o)
+    {
+        Vector3 v = b.GetPos();
+        // if(v.x == )
+        b.SetShape(new Vector3(v.x + Node.leng, v.y, 0f));
+    }
+    void OnClick_Down(GameObject o)
+    {
+        drop_speed *= 100f;
+    }
 }

@@ -77,17 +77,17 @@ public class Block
     {
         return null;
     }
-    public bool IsDropEnd(float line)
+    public float IsDropEnd(float line)
     {
         List<float> lowList = GetLowPos_Y();
         for (int i = 0; i < lowList.Count; i++)
         {
             if (lowList[i] <= line)
             {
-                return true;
+                return lowList[i];
             }
         }
-        return false;
+        return -1;
     }
 }
 
@@ -109,7 +109,6 @@ public class I_Block : Block
         maxFlag = 2;
         nodeList = nList;
     }
-
     public override Vector3 GetPos()
     {
         if (flag == 1)
@@ -182,7 +181,6 @@ public class L_Block : Block
         maxFlag = 4;
         nodeList = nList;
     }
-
     public override void SetShape(Vector3 v)
     {
         if (flag == 1)
@@ -214,7 +212,6 @@ public class L_Block : Block
             nodeList[3].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
         }
     }
-
     public override Vector3 GetPos()
     {
         Vector3 v = nodeList[0].GetPos();
@@ -236,7 +233,6 @@ public class L_Block : Block
         }
         return v;
     }
-
     public override List<float> GetLowPos_Y()
     {
         List<float> low_y = new List<float>();
