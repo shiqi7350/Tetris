@@ -50,6 +50,9 @@ public class Node
 public class Block
 {
     public int flag = 1;
+    /// <summary>
+    /// 单个块的形态数
+    /// </summary>
     public int maxFlag = 1;
     public Node[] nodeList;
 
@@ -73,22 +76,9 @@ public class Block
         return Vector3.zero;
     }
 
-    public virtual List<float> GetLowPos_Y() //抽象方法
-    {
-        return null;
-    }
-    public float IsDropEnd(float line)
-    {
-        List<float> lowList = GetLowPos_Y();
-        for (int i = 0; i < lowList.Count; i++)
-        {
-            if (lowList[i] <= line)
-            {
-                return lowList[i];
-            }
-        }
-        return -1;
-    }
+    public virtual List<Node> GetRightNode() { return null; }
+    public virtual List<Node> GetLeftNode() { return null; }
+    public virtual List<Node> GetDownNode() { return null; }
 }
 
 /// <summary>
@@ -139,21 +129,49 @@ public class I_Block : Block
             nodeList[3].SetPos(new Vector3(v.x + Node.leng * 1.5f, v.y + Node.leng * 0.5f, 0f));
         }
     }
-    public override List<float> GetLowPos_Y()
+
+    public override List<Node> GetRightNode()
     {
-        List<float> low_y = new List<float>();
+        List<Node> xlist = new List<Node>();
         if (flag == 1)
         {
-            low_y.Add(nodeList[3].GetPos().y - Node.leng / 2);
+            for (int i = 0; i < 4; i++)
+                xlist.Add(nodeList[i]);
+        }
+        else
+        {
+            xlist.Add(nodeList[3]);
+        }
+        return xlist;
+    }
+    public override List<Node> GetLeftNode()
+    {
+        List<Node> xlist = new List<Node>();
+        if (flag == 1)
+        {
+            for (int i = 0; i < 4; i++)
+                xlist.Add(nodeList[i]);
+        }
+        else
+        {
+            xlist.Add(nodeList[0]);
+        }
+        return xlist;
+    }
+    public override List<Node> GetDownNode()
+    {
+        List<Node> ylist = new List<Node>();
+        if (flag == 1)
+        {
+            ylist.Add(nodeList[3]);
+
         }
         else
         {
             for (int i = 0; i < 4; i++)
-            {
-                low_y.Add(nodeList[i].GetPos().y - Node.leng / 2);
-            }
+                ylist.Add(nodeList[i]);
         }
-        return low_y;
+        return ylist;
     }
 }
 
@@ -233,32 +251,87 @@ public class L_Block : Block
         }
         return v;
     }
-    public override List<float> GetLowPos_Y()
+
+    public override List<Node> GetLeftNode()
     {
-        List<float> low_y = new List<float>();
-        if (flag == 1)
+        List<Node> list = new List<Node>();
+        if (1 == flag)
         {
-            low_y.Add(nodeList[2].GetPos().y - Node.leng / 2);
-            low_y.Add(nodeList[3].GetPos().y - Node.leng / 2);
+            list.Add(nodeList[0]);
+            list.Add(nodeList[1]);
+            list.Add(nodeList[2]);
         }
-        else if (flag == 2)
+        else if (2 == flag)
         {
-            low_y.Add(nodeList[3].GetPos().y - Node.leng / 2);
-            low_y.Add(nodeList[1].GetPos().y - Node.leng / 2);
-            low_y.Add(nodeList[2].GetPos().y - Node.leng / 2);
+            list.Add(nodeList[0]);
+            list.Add(nodeList[3]);
         }
-        else if (flag == 3)
+        else if (3 == flag)
         {
-            low_y.Add(nodeList[0].GetPos().y - Node.leng / 2);
-            low_y.Add(nodeList[3].GetPos().y - Node.leng / 2);
+            list.Add(nodeList[0]);
+            list.Add(nodeList[2]);
+            list.Add(nodeList[3]);
         }
-        else if (flag == 4)
+        else if (4 == flag)
         {
-            low_y.Add(nodeList[1].GetPos().y - Node.leng / 2);
-            low_y.Add(nodeList[2].GetPos().y - Node.leng / 2);
-            low_y.Add(nodeList[3].GetPos().y - Node.leng / 2);
+            list.Add(nodeList[0]);
+            list.Add(nodeList[1]);
         }
-        return low_y;
+        return list;
+    }
+    public override List<Node> GetRightNode()
+    {
+        List<Node> list = new List<Node>();
+        if (1 == flag)
+        {
+            list.Add(nodeList[0]);
+            list.Add(nodeList[1]);
+            list.Add(nodeList[3]);
+        }
+        else if (2 == flag)
+        {
+            list.Add(nodeList[2]);
+            list.Add(nodeList[3]);
+        }
+        else if (3 == flag)
+        {
+            list.Add(nodeList[1]);
+            list.Add(nodeList[2]);
+            list.Add(nodeList[3]);
+        }
+        else if (4 == flag)
+        {
+            list.Add(nodeList[1]);
+            list.Add(nodeList[3]);
+        }
+        return list;
+    }
+    public override List<Node> GetDownNode()
+    {
+        List<Node> list = new List<Node>();
+        if (1 == flag)
+        {
+            list.Add(nodeList[2]);
+            list.Add(nodeList[3]);
+        }
+        else if (2 == flag)
+        {
+            list.Add(nodeList[1]);
+            list.Add(nodeList[2]);
+            list.Add(nodeList[3]);
+        }
+        else if (3 == flag)
+        {
+            list.Add(nodeList[0]);
+            list.Add(nodeList[3]);
+        }
+        else if (4 == flag)
+        {
+            list.Add(nodeList[1]);
+            list.Add(nodeList[2]);
+            list.Add(nodeList[3]);
+        }
+        return list;
     }
 }
 
