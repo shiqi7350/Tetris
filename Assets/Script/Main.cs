@@ -56,6 +56,7 @@ public class Main : MonoBehaviour
     bool is_dropping = true;
     void Update()
     {
+        if (game_over) return;
         if (is_dropping)
         {
             // c_time += Time.deltaTime;
@@ -71,7 +72,7 @@ public class Main : MonoBehaviour
                     int[] idx = f.GetFrameIndex(n.GetPos().x, n.GetPos().y);
                     if (idx[1] >= f.high_size - 1)
                     {
-                        Debug.LogError("Game Over!");
+                        ShowGameOver();
                         return;
                     }
                     if (f.IsFullFrame(idx[0], idx[1]))
@@ -125,7 +126,6 @@ public class Main : MonoBehaviour
 
 
     bool is_normal_drop = true;
-    List<int> cur_y_index = new List<int>();
     bool IsDropEnd()
     {
         if (is_normal_drop)
@@ -153,24 +153,14 @@ public class Main : MonoBehaviour
         }
         else
         {
-            for (int i = 0; i < b.down_list.Count; i++)
-            {
-                Vector3 pos = b.down_list[i].GetPos();
-                float x = pos.x;
-                float y = pos.y;
-                if (y - Node.leng * 0.5f <= f.down_max_pos)
-                {
-                    AdjustBlock(1, f.down_max_pos + Node.leng * 0.5f - y);
-                    return true;//-493             //-
-                }
-                int hi = cur_y_index[i];
-                if (hi <= -1) continue;
+            Vector3 pos = b.down_list[up_indx].GetPos();
+            float x = pos.x;
+            float y = pos.y;
 
-                if (y - Node.leng * 0.5f <= f.down_max_pos + (hi + 1) * Node.leng)
-                {
-                    AdjustBlock(1, f.down_max_pos + Node.leng * 0.5f + (hi + 1) * Node.leng - y);
-                    return true;
-                }
+            if (y - Node.leng * 0.5f <= f.down_max_pos + (down_indx + 1) * Node.leng)
+            {
+                AdjustBlock(1, f.down_max_pos + Node.leng * 0.5f + (down_indx + 1) * Node.leng - y);
+                return true;
             }
         }
         return false;
@@ -199,7 +189,6 @@ public class Main : MonoBehaviour
         if (1 == type) //往下 过头
         {
             Vector3 v = b.GetPos();
-            print("offset = " + offset + ", v.y = " + v.y);
             b.SetShape(new Vector3(v.x, v.y + offset, 0f));
         }
     }
@@ -227,18 +216,23 @@ public class Main : MonoBehaviour
                 t_type = 2;
                 break;
             case 'J':
+                tmp_b = new J_Block(nl, type);
                 t_type = 3;
                 break;
             case 'T':
+                // tmp_b = new T_Block(nl, type);
                 t_type = 4;
                 break;
             case 'Z':
+                // tmp_b = new Z_Block(nl, type);
                 t_type = 5;
                 break;
             case 'S':
+                // tmp_b = new S_Block(nl, type);
                 t_type = 6;
                 break;
             case 'O':
+                tmp_b = new O_Block(nl, type);
                 t_type = 7;
                 break;
         }
@@ -249,19 +243,29 @@ public class Main : MonoBehaviour
     /// </summary>
     void CreateRandomBlock()
     {
-        char[] sc = new char[2] { 'L', 'I' };
+        char[] sc = new char[4] { 'I', 'L', 'J', 'O' };
         int rNum = Random.Range(0, sc.Length);
         int rType = 0;
-        if (sc[rNum] == 'L')
+        switch (sc[rNum])
         {
-            rType = Random.Range(1, 5);
+            case 'I':
+                rType = Random.Range(1, 3);
+                break;
+            case 'L':
+            case 'J':
+            case 'T':
+                rType = Random.Range(1, 5);
+                break;
+            case 'S':
+                break;
+            case 'Z':
+                break;
+            case 'O':
+                break;
         }
-        else if (sc[rNum] == 'I')
-        {
-            rType = Random.Range(1, 3);
-        }
-        // b = CreateBlock(sc[rNum], rType);
-        b = CreateBlock('L', 4);
+
+        b = CreateBlock(sc[rNum], rType);
+        // b = CreateBlock('J', 4);
         b.SetColor(Random.Range(1, 8));
         b.SetShape(new Vector3(0f, 600f, 0f));
         drop_speed = drop_speed_const;
@@ -336,19 +340,36 @@ public class Main : MonoBehaviour
         Vector3 v = b.GetPos();
         b.SetShape(new Vector3(v.x + Node.leng, v.y, 0f));
     }
+
+    int up_indx = 0;
+    int down_indx = -1;
     void OnClick_Down(GameObject o)
     {
         if (!is_normal_drop) return;
-        cur_y_index.Clear();
+        float h_length = 20000f;
+        // cur_y_index.Clear();
         for (int i = 0; i < b.down_list.Count; i++)
         {
             Vector3 pos = b.down_list[i].GetPos();
             float x = pos.x;
             float y = pos.y;
-            cur_y_index.Add(GetCurHighFullFrame(x, y));
+            int low_h = GetCurHighFullFrame(x, y);
+            float x_offset = y - (f.down_max_pos + (low_h + 1) * Node.leng);
+            if (h_length > x_offset)
+            {
+                h_length = x_offset;
+                up_indx = i;
+                down_indx = low_h;
+            }
         }
-
         is_normal_drop = false;
         drop_speed *= 20f;
+    }
+
+    bool game_over = false;
+    void ShowGameOver()
+    {
+        game_over = true;
+        Debug.LogError("Game Over!");
     }
 }
