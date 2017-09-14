@@ -53,18 +53,19 @@ public class Frame
         all_node[idxx[0], idxx[1]] = n;
     }
 
-    bool IsFullFrame(int i, int j)
+    public bool IsFullFrame(int i, int j)
     {
+        if (i < 0 || i >= wide_size || j < 0 || j >= high_size) return true;
         return all_node[i, j] != null;
     }
 
-    public bool IsFullFrame(float x, float y)
-    {
-        int[] xidx = GetFrameIndex(x, y);
-        if (xidx == null)
-            return true;
-        return IsFullFrame(xidx[0], xidx[1]);
-    }
+    // public bool IsFullFrame(float x, float y)
+    // {
+    //     int[] xidx = GetFrameIndex(x, y);
+    //     if (xidx == null)
+    //         return true;
+    //     return IsFullFrame(xidx[0], xidx[1]);
+    // }
 
     List<int> ready_down_flag = new List<int>();
     public bool DeleteLine()
@@ -109,7 +110,7 @@ public class Frame
                             Vector3 v = all_node[x, y].GetPos();
                             Node tmp_node = all_node[x, y];
                             all_node[x, y] = null;
-                            all_node[x, y].SetPos(new Vector3(v.x, v.y - Node.leng, 0f));
+                            tmp_node.SetPos(new Vector3(v.x, v.y - Node.leng, 0f));
                             all_node[x, y - 1] = tmp_node;
                         }
                     }

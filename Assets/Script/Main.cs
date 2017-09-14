@@ -86,7 +86,19 @@ public class Main : MonoBehaviour
                     }
                     f.all_node[idx[0], idx[1]] = n;
                 }
-
+                string testStr = "";
+                for (int j = f.high_size - 1; j >= 0; j--)
+                {
+                    for (int i = 0; i < f.wide_size; i++)
+                    {
+                        string s = " ";
+                        if (f.all_node[i, j] != null)
+                            s = "□";
+                        testStr += s + ", ";
+                    }
+                    testStr += "\n";
+                }
+                // Debug.Log(testStr);
                 if (f.DeleteLine())
                 {
                     is_dropping = true;
@@ -119,24 +131,34 @@ public class Main : MonoBehaviour
 
     bool IsDropEnd()
     {
-        List<Node> down_node_list = b.GetDownNode();
-        for (int i = 0; i < down_node_list.Count; i++)
+        for (int i = 0; i < b.down_list.Count; i++)
         {
-            Vector3 pos = down_node_list[i].GetPos();
+            Vector3 pos = b.down_list[i].GetPos();
             float x = pos.x;
             float y = pos.y;
-            // int xi = f.GetFrameIndex(x, y)[0];
-            if (y <= f.down_max)
+            int[] poIndx = f.GetFrameIndex(x, y);
+            int xIndx = poIndx[0];
+            int yIndx = poIndx[1];
+            if (yIndx >= f.high_size) continue;
+
+            int hi = -1;
+            for (int h = yIndx - 1; h >= 0; h--)
+            {
+                if (f.IsFullFrame(xIndx, h))
+                {
+                    hi = h;
+                    // Debug.LogWarning("hi =" + hi);
+                    break;
+                }
+            }
+            if (y - Node.leng * 0.5f <= f.down_max)
             {
                 AdjustBlock(1, f.down_max + Node.leng * 0.5f - y);
                 return true;
             }
-            else if (
-                y - Node.leng <= f.up_max &&
-                f.IsFullFrame(x, y - Node.leng) &&
-                y - Node.leng * 0.5f <= f.GetFramePos(x, y - Node.leng).y + Node.leng * 0.5f)
+            else if (hi > -1 && y - Node.leng * 0.5f <= f.down_max + (hi + 1) * Node.leng)
             {
-                AdjustBlock(1, f.GetFramePos(x, y - Node.leng).y + Node.leng * 0.5f - y);
+                AdjustBlock(1, f.down_max + Node.leng * 0.5f + (hi + 1) * Node.leng - y);
                 return true;
             }
         }
@@ -245,19 +267,18 @@ public class Main : MonoBehaviour
             {
                 return;
             }
-
-            if (f.IsFullFrame(x - Node.leng, y)) //左边 有块
+            int[] idx = f.GetFrameIndex(x - Node.leng, y);
+            if (idx == null || f.IsFullFrame(idx[0], idx[1])) //左边 有块
             {
                 return;
             }
         }
         Vector3 v = b.GetPos();
         b.SetShape(new Vector3(v.x - Node.leng, v.y, 0f));
-
     }
     void OnClick_Right(GameObject o)
     {
-        List<Node> right_node_list = b.GetLeftNode();
+        List<Node> right_node_list = b.GetRightNode();
         for (int i = 0; i < right_node_list.Count; i++)
         {
             Vector3 pos = right_node_list[i].GetPos();
@@ -267,8 +288,8 @@ public class Main : MonoBehaviour
             {
                 return;
             }
-
-            if (f.IsFullFrame(x + Node.leng, y)) //右边 有块
+            int[] idx = f.GetFrameIndex(x + Node.leng, y);
+            if (idx == null || f.IsFullFrame(idx[0], idx[1])) //右边 有块
             {
                 return;
             }

@@ -56,6 +56,8 @@ public class Block
     public int maxFlag = 1;
     public Node[] nodeList;
 
+    public List<Node> down_list = new List<Node>();
+
     public Block()
     {
         nodeList = new Node[4];
@@ -69,7 +71,10 @@ public class Block
         }
     }
 
-    public virtual void SetShape(Vector3 v) { }
+    public virtual void SetShape(Vector3 v)
+    {
+        down_list.Clear();
+    }
 
     public virtual Vector3 GetPos()
     {
@@ -114,12 +119,14 @@ public class I_Block : Block
 
     public override void SetShape(Vector3 v)
     {
+        down_list.Clear();
         if (flag == 1)
         {
             nodeList[0].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 2.5f, 0f));
             nodeList[1].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 1.5f, 0f));
             nodeList[2].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
             nodeList[3].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+            down_list.Add(nodeList[3]);
         }
         else if (flag == 2)
         {
@@ -127,6 +134,10 @@ public class I_Block : Block
             nodeList[1].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
             nodeList[2].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
             nodeList[3].SetPos(new Vector3(v.x + Node.leng * 1.5f, v.y + Node.leng * 0.5f, 0f));
+            for (int i = 0; i < 4; i++)
+            {
+                down_list.Add(nodeList[i]);
+            }
         }
     }
 
@@ -201,12 +212,15 @@ public class L_Block : Block
     }
     public override void SetShape(Vector3 v)
     {
+        down_list.Clear();
         if (flag == 1)
         {
             nodeList[0].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + 1.5f * Node.leng, 0f));
             nodeList[1].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + 0.5f * Node.leng, 0f));
             nodeList[2].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y - 0.5f * Node.leng, 0f));
             nodeList[3].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y - 0.5f * Node.leng, 0f));
+            down_list.Add(nodeList[2]);
+            down_list.Add(nodeList[3]);
         }
         else if (flag == 2)
         {
@@ -214,6 +228,9 @@ public class L_Block : Block
             nodeList[1].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
             nodeList[2].SetPos(new Vector3(v.x + Node.leng * 1.5f, v.y + Node.leng * 0.5f, 0f));
             nodeList[3].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+            down_list.Add(nodeList[1]);
+            down_list.Add(nodeList[2]);
+            down_list.Add(nodeList[3]);
         }
         else if (flag == 3)
         {
@@ -221,6 +238,8 @@ public class L_Block : Block
             nodeList[1].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
             nodeList[2].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
             nodeList[3].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 1.5f, 0f));
+            down_list.Add(nodeList[0]);
+            down_list.Add(nodeList[3]);
         }
         else if (flag == 4)
         {
@@ -228,6 +247,9 @@ public class L_Block : Block
             nodeList[1].SetPos(new Vector3(v.x - Node.leng * 1.5f, v.y - Node.leng * 0.5f, 0f));
             nodeList[2].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
             nodeList[3].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+            down_list.Add(nodeList[1]);
+            down_list.Add(nodeList[2]);
+            down_list.Add(nodeList[3]);
         }
     }
     public override Vector3 GetPos()
