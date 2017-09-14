@@ -16,7 +16,7 @@ public class Node
 
     public void SetColor(int color)
     {
-        node.GetComponent<Image>().sprite = Resources.Load("0" + color, typeof (Sprite)) as Sprite;;
+        node.GetComponent<Image>().sprite = Resources.Load("0" + color, typeof(Sprite)) as Sprite; ;
     }
     public void DestroyNode()
     {
@@ -56,6 +56,10 @@ public class Block
     public int maxFlag = 1;
     public Node[] nodeList;
 
+    /// <summary>
+    /// 底层Node,必须要从左往右Add
+    /// </summary>
+    /// <returns></returns>
     public List<Node> down_list = new List<Node>();
 
     public Block()
@@ -212,15 +216,15 @@ public class L_Block : Block
     }
     public override void SetShape(Vector3 v)
     {
-        down_list.Clear();
+        down_list.Clear();//底层Node,必须要从左往右Add
         if (flag == 1)
         {
             nodeList[0].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + 1.5f * Node.leng, 0f));
             nodeList[1].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y + 0.5f * Node.leng, 0f));
             nodeList[2].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y - 0.5f * Node.leng, 0f));
             nodeList[3].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y - 0.5f * Node.leng, 0f));
-            down_list.Add(nodeList[2]);
-            down_list.Add(nodeList[3]);
+            down_list.Add(nodeList[2]);//底层Node,必须要从左往右Add
+            down_list.Add(nodeList[3]);//底层Node,必须要从左往右Add
         }
         else if (flag == 2)
         {
@@ -228,9 +232,9 @@ public class L_Block : Block
             nodeList[1].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
             nodeList[2].SetPos(new Vector3(v.x + Node.leng * 1.5f, v.y + Node.leng * 0.5f, 0f));
             nodeList[3].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
-            down_list.Add(nodeList[1]);
-            down_list.Add(nodeList[2]);
-            down_list.Add(nodeList[3]);
+            down_list.Add(nodeList[3]);//底层Node,必须要从左往右Add
+            down_list.Add(nodeList[1]);//底层Node,必须要从左往右Add
+            down_list.Add(nodeList[2]);//底层Node,必须要从左往右Add
         }
         else if (flag == 3)
         {
@@ -238,8 +242,8 @@ public class L_Block : Block
             nodeList[1].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
             nodeList[2].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
             nodeList[3].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 1.5f, 0f));
-            down_list.Add(nodeList[0]);
-            down_list.Add(nodeList[3]);
+            down_list.Add(nodeList[0]);//底层Node,必须要从左往右Add
+            down_list.Add(nodeList[3]);//底层Node,必须要从左往右Add
         }
         else if (flag == 4)
         {
@@ -247,9 +251,9 @@ public class L_Block : Block
             nodeList[1].SetPos(new Vector3(v.x - Node.leng * 1.5f, v.y - Node.leng * 0.5f, 0f));
             nodeList[2].SetPos(new Vector3(v.x - Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
             nodeList[3].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
-            down_list.Add(nodeList[1]);
-            down_list.Add(nodeList[2]);
-            down_list.Add(nodeList[3]);
+            down_list.Add(nodeList[1]);//底层Node,必须要从左往右Add
+            down_list.Add(nodeList[2]);//底层Node,必须要从左往右Add
+            down_list.Add(nodeList[3]);//底层Node,必须要从左往右Add
         }
     }
     public override Vector3 GetPos()

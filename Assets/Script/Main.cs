@@ -24,22 +24,22 @@ public class Main : MonoBehaviour
     {
         f = new Frame();
         button_rotate = transform.Find("Btn_Rotate").GetComponent<Button>();
-        button_rotate.onClick.AddListener(delegate()
+        button_rotate.onClick.AddListener(delegate ()
         {
             this.OnClick_Rotate(button_rotate.gameObject);
         });
         button_left = transform.Find("Btn_Left").GetComponent<Button>();
-        button_left.onClick.AddListener(delegate()
+        button_left.onClick.AddListener(delegate ()
         {
             this.OnClick_Left(button_left.gameObject);
         });
         button_right = transform.Find("Btn_Right").GetComponent<Button>();
-        button_right.onClick.AddListener(delegate()
+        button_right.onClick.AddListener(delegate ()
         {
             this.OnClick_Right(button_right.gameObject);
         });
         button_down = transform.Find("Btn_Down").GetComponent<Button>();
-        button_down.onClick.AddListener(delegate()
+        button_down.onClick.AddListener(delegate ()
         {
             this.OnClick_Down(button_down.gameObject);
         });
@@ -53,21 +53,10 @@ public class Main : MonoBehaviour
     float c_time = 0f;
     float tap_time = 0.05f;
     float drop_time = 0f;
-    bool is_dropping = false;
+    bool is_dropping = true;
     void Update()
     {
         if (is_dropping)
-        {
-            drop_time += Time.deltaTime;
-            if (drop_time >= tap_time)
-            {
-                drop_time = 0f;
-                f.DeleteLine_Drop();
-                CreateRandomBlock();
-                is_dropping = false;
-            }
-        }
-        else
         {
             // c_time += Time.deltaTime;
             // if (c_time >= tap_time)
@@ -80,28 +69,22 @@ public class Main : MonoBehaviour
                 foreach (Node n in b.nodeList)
                 {
                     int[] idx = f.GetFrameIndex(n.GetPos().x, n.GetPos().y);
-                    if (f.all_node[idx[0], idx[1]] != null)
+                    if (idx[1] >= f.high_size - 1)
                     {
-                        Debug.LogError("不为空的Frame 被赋值！");
+                        Debug.LogError("Game Over!");
+                        return;
+                    }
+                    if (f.IsFullFrame(idx[0], idx[1]))
+                    {
+                        Debug.LogError("不为空的或不存在的 Frame 被赋值！");
+                        return;
                     }
                     f.all_node[idx[0], idx[1]] = n;
                 }
-                string testStr = "";
-                for (int j = f.high_size - 1; j >= 0; j--)
-                {
-                    for (int i = 0; i < f.wide_size; i++)
-                    {
-                        string s = " ";
-                        if (f.all_node[i, j] != null)
-                            s = "□";
-                        testStr += s + ", ";
-                    }
-                    testStr += "\n";
-                }
-                // Debug.Log(testStr);
+
                 if (f.DeleteLine())
                 {
-                    is_dropping = true;
+                    is_dropping = false;
                 }
                 else
                 {
@@ -110,6 +93,17 @@ public class Main : MonoBehaviour
             }
             // }
         }
+        else
+        {
+            drop_time += Time.deltaTime;
+            if (drop_time >= tap_time)
+            {
+                drop_time = 0f;
+                f.DeleteLine_Drop();
+                CreateRandomBlock();
+            }
+        }
+
 
         if (Input.GetKeyDown(KeyCode.A))
         {
@@ -129,46 +123,83 @@ public class Main : MonoBehaviour
         }
     }
 
+
+    bool is_normal_drop = true;
+    List<int> cur_y_index = new List<int>();
     bool IsDropEnd()
     {
-        for (int i = 0; i < b.down_list.Count; i++)
+        if (is_normal_drop)
         {
-            Vector3 pos = b.down_list[i].GetPos();
-            float x = pos.x;
-            float y = pos.y;
-            int[] poIndx = f.GetFrameIndex(x, y);
-            int xIndx = poIndx[0];
-            int yIndx = poIndx[1];
-            if (yIndx >= f.high_size) continue;
-
-            int hi = -1;
-            for (int h = yIndx - 1; h >= 0; h--)
+            for (int i = 0; i < b.down_list.Count; i++)
             {
-                if (f.IsFullFrame(xIndx, h))
+                Vector3 pos = b.down_list[i].GetPos();
+                float x = pos.x;
+                float y = pos.y;
+                if (y - Node.leng * 0.5f <= f.down_max_pos)
                 {
-                    hi = h;
-                    // Debug.LogWarning("hi =" + hi);
-                    break;
+                    AdjustBlock(1, f.down_max_pos + Node.leng * 0.5f - y);
+                    return true;
+                }
+
+                int hi = GetCurHighFullFrame(x, y);
+                if (hi <= -1) continue;
+
+                if (y - Node.leng * 0.5f <= f.down_max_pos + (hi + 1) * Node.leng)
+                {
+                    AdjustBlock(1, f.down_max_pos + Node.leng * 0.5f + (hi + 1) * Node.leng - y);
+                    return true;
                 }
             }
-            if (y - Node.leng * 0.5f <= f.down_max)
+        }
+        else
+        {
+            for (int i = 0; i < b.down_list.Count; i++)
             {
-                AdjustBlock(1, f.down_max + Node.leng * 0.5f - y);
-                return true;
-            }
-            else if (hi > -1 && y - Node.leng * 0.5f <= f.down_max + (hi + 1) * Node.leng)
-            {
-                AdjustBlock(1, f.down_max + Node.leng * 0.5f + (hi + 1) * Node.leng - y);
-                return true;
+                Vector3 pos = b.down_list[i].GetPos();
+                float x = pos.x;
+                float y = pos.y;
+                if (y - Node.leng * 0.5f <= f.down_max_pos)
+                {
+                    AdjustBlock(1, f.down_max_pos + Node.leng * 0.5f - y);
+                    return true;//-493             //-
+                }
+                int hi = cur_y_index[i];
+                if (hi <= -1) continue;
+
+                if (y - Node.leng * 0.5f <= f.down_max_pos + (hi + 1) * Node.leng)
+                {
+                    AdjustBlock(1, f.down_max_pos + Node.leng * 0.5f + (hi + 1) * Node.leng - y);
+                    return true;
+                }
             }
         }
         return false;
     }
+
+    int GetCurHighFullFrame(float x, float y)
+    {
+        int[] poIndx = f.GetFrameIndex(x, y);
+        int xIndx = poIndx[0];
+        int yIndx = poIndx[1];
+        if (yIndx >= f.high_size) yIndx = f.high_size - 1;
+
+        for (int h = yIndx - 1; h >= 0; h--)
+        {
+            if (f.IsFullFrame(xIndx, h))
+            {
+                return h;
+            }
+        }
+        return -1;
+    }
+
+
     void AdjustBlock(int type, float offset)
     {
         if (1 == type) //往下 过头
         {
             Vector3 v = b.GetPos();
+            print("offset = " + offset + ", v.y = " + v.y);
             b.SetShape(new Vector3(v.x, v.y + offset, 0f));
         }
     }
@@ -229,11 +260,13 @@ public class Main : MonoBehaviour
         {
             rType = Random.Range(1, 3);
         }
-        b = CreateBlock(sc[rNum], rType);
-        // b = CreateBlock('I', 1);
+        // b = CreateBlock(sc[rNum], rType);
+        b = CreateBlock('L', 4);
         b.SetColor(Random.Range(1, 8));
         b.SetShape(new Vector3(0f, 600f, 0f));
         drop_speed = drop_speed_const;
+        is_normal_drop = true;
+        is_dropping = true;
     }
 
     void Block_Drop(Block curB, float speed)
@@ -246,6 +279,7 @@ public class Main : MonoBehaviour
 
     void OnClick_Rotate(GameObject o)
     {
+        if (!is_normal_drop) return;
         //旋转 （全都是 顺时针旋转）
         Vector3 central_point = b.GetPos();
         b.flag++;
@@ -257,18 +291,21 @@ public class Main : MonoBehaviour
     }
     void OnClick_Left(GameObject o)
     {
+        if (!is_normal_drop) return;
         List<Node> left_node_list = b.GetLeftNode();
         for (int i = 0; i < left_node_list.Count; i++)
         {
             Vector3 pos = left_node_list[i].GetPos();
             float x = pos.x;
             float y = pos.y;
-            if (x - Node.leng * 0.5f <= f.left_max) //超出 左 边界
+            if (x - Node.leng * 0.5f <= f.left_max_pos) //超出 左 边界
             {
                 return;
             }
             int[] idx = f.GetFrameIndex(x - Node.leng, y);
-            if (idx == null || f.IsFullFrame(idx[0], idx[1])) //左边 有块
+            if (idx[1] >= f.high_size) continue;
+
+            if (idx[0] < 0 || f.IsFullFrame(idx[0], idx[1])) //左边 有块
             {
                 return;
             }
@@ -278,18 +315,20 @@ public class Main : MonoBehaviour
     }
     void OnClick_Right(GameObject o)
     {
+        if (!is_normal_drop) return;
         List<Node> right_node_list = b.GetRightNode();
         for (int i = 0; i < right_node_list.Count; i++)
         {
             Vector3 pos = right_node_list[i].GetPos();
             float x = pos.x;
             float y = pos.y;
-            if (x - Node.leng * 0.5f >= f.right_max) //超出 右 边界
+            if (x - Node.leng * 0.5f >= f.right_max_pos) //超出 右 边界
             {
                 return;
             }
             int[] idx = f.GetFrameIndex(x + Node.leng, y);
-            if (idx == null || f.IsFullFrame(idx[0], idx[1])) //右边 有块
+            if (idx[1] >= f.high_size) continue;
+            if (idx[0] >= f.wide_size || f.IsFullFrame(idx[0], idx[1])) //右边 有块
             {
                 return;
             }
@@ -299,7 +338,17 @@ public class Main : MonoBehaviour
     }
     void OnClick_Down(GameObject o)
     {
+        if (!is_normal_drop) return;
+        cur_y_index.Clear();
+        for (int i = 0; i < b.down_list.Count; i++)
+        {
+            Vector3 pos = b.down_list[i].GetPos();
+            float x = pos.x;
+            float y = pos.y;
+            cur_y_index.Add(GetCurHighFullFrame(x, y));
+        }
 
+        is_normal_drop = false;
         drop_speed *= 20f;
     }
 }

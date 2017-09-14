@@ -6,18 +6,18 @@ public class Frame
 {
     public int wide_size = 14;
     public int high_size = 21;
-    public float left_max = -350f;
-    public float right_max = 350f;
-    public float down_max = -530f;
-    public float up_max = 520f;
+    public float left_max_pos = -350f;
+    public float right_max_pos = 350f;
+    public float down_max_pos = -530f;
+    public float up_max_pos = 520f;
 
-    public Node[, ] all_node;
+    public Node[,] all_node;
     public Frame()
     {
-        all_node = new Node[14, 21];
-        for (int i = 0; i < 14; i++)
+        all_node = new Node[wide_size, high_size];
+        for (int i = 0; i < wide_size; i++)
         {
-            for (int j = 0; j < 21; j++)
+            for (int j = 0; j < high_size; j++)
             {
                 all_node[i, j] = null;
             }
@@ -30,42 +30,17 @@ public class Frame
     // 0-13
     public int[] GetFrameIndex(float x, float y)
     {
-        int h = (int)((x - left_max) / 50);
-        int v = (int)((y - down_max) / 50);
-        if (h < 0 || h > 13 || v < 0) // || v > 20)
-            return null;
+        int h = (int)((x - left_max_pos) / 50);
+        int v = (int)((y - down_max_pos) / 50);
         return new int[2] { h, v };
     }
 
-    public Vector3 GetFramePos(float x, float y)
-    {
-        int[] xidx = GetFrameIndex(x, y);
-        if (xidx == null) return Vector3.zero;
-        float xpos = left_max + Node.leng * (0.5f + xidx[0]);
-        float ypos = down_max + Node.leng * (0.5f + xidx[1]);
-        return new Vector3(xpos, ypos, 0f);
-    }
-
-    public void SetFrameFull(Node n)
-    {
-        Vector3 v = n.GetPos();
-        int[] idxx = GetFrameIndex(v.x, v.y);
-        all_node[idxx[0], idxx[1]] = n;
-    }
 
     public bool IsFullFrame(int i, int j)
     {
         if (i < 0 || i >= wide_size || j < 0 || j >= high_size) return true;
         return all_node[i, j] != null;
     }
-
-    // public bool IsFullFrame(float x, float y)
-    // {
-    //     int[] xidx = GetFrameIndex(x, y);
-    //     if (xidx == null)
-    //         return true;
-    //     return IsFullFrame(xidx[0], xidx[1]);
-    // }
 
     List<int> ready_down_flag = new List<int>();
     public bool DeleteLine()
