@@ -220,15 +220,15 @@ public class Main : MonoBehaviour
                 t_type = 3;
                 break;
             case 'T':
-                // tmp_b = new T_Block(nl, type);
+                tmp_b = new T_Block(nl, type);
                 t_type = 4;
                 break;
             case 'Z':
-                // tmp_b = new Z_Block(nl, type);
+                tmp_b = new Z_Block(nl, type);
                 t_type = 5;
                 break;
             case 'S':
-                // tmp_b = new S_Block(nl, type);
+                tmp_b = new S_Block(nl, type);
                 t_type = 6;
                 break;
             case 'O':
@@ -243,7 +243,7 @@ public class Main : MonoBehaviour
     /// </summary>
     void CreateRandomBlock()
     {
-        char[] sc = new char[4] { 'I', 'L', 'J', 'O' };
+        char[] sc = new char[7] { 'I', 'L', 'J', 'T', 'Z', 'S', 'O' };
         int rNum = Random.Range(0, sc.Length);
         int rType = 0;
         switch (sc[rNum])
@@ -257,10 +257,11 @@ public class Main : MonoBehaviour
                 rType = Random.Range(1, 5);
                 break;
             case 'S':
-                break;
             case 'Z':
+                rType = Random.Range(1, 3);
                 break;
             case 'O':
+                rType = 1;
                 break;
         }
 
