@@ -79,6 +79,10 @@ public class Block
     {
         down_list.Clear();
     }
+    public virtual List<Vector3> V_SetShape(Vector3 v)
+    {
+        return null;
+    }
 
     public virtual Vector3 GetPos()
     {
@@ -144,6 +148,26 @@ public class I_Block : Block
                 down_list.Add(nodeList[i]);//底层Node,必须要从左往右Add
             }
         }
+    }
+
+    public override List<Vector3> V_SetShape(Vector3 v)
+    {
+        List<Vector3> v_vector3 = new List<Vector3>();
+        if (flag == 1)
+        {
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 2.5f, 0f));
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 1.5f, 0f));
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+        }
+        else if (flag == 2)
+        {
+            v_vector3.Add(new Vector3(v.x - Node.leng * 1.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 1.5f, v.y + Node.leng * 0.5f, 0f));
+        }
+        return v_vector3;
     }
 
     public override List<Node> GetRightNode()
@@ -241,6 +265,40 @@ public class L_Block : Block
             down_list.Add(nodeList[2]);//底层Node,必须要从左往右Add
             down_list.Add(nodeList[3]);//底层Node,必须要从左往右Add
         }
+    }
+
+    public override List<Vector3> V_SetShape(Vector3 v)
+    {
+        List<Vector3> v_vector3 = new List<Vector3>();
+        if (flag == 1)
+        {
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y + 1.5f * Node.leng, 0f));
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y + 0.5f * Node.leng, 0f));
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y - 0.5f * Node.leng, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y - 0.5f * Node.leng, 0f));
+        }
+        else if (flag == 2)
+        {
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 1.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+        }
+        else if (flag == 3)
+        {
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 1.5f, 0f));
+        }
+        else if (flag == 4)
+        {
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x - Node.leng * 1.5f, v.y - Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+        }
+        return v_vector3;
     }
     public override Vector3 GetPos()
     {
@@ -387,6 +445,39 @@ public class J_Block : Block
             down_list.Add(nodeList[3]);//底层Node,必须要从左往右Add
         }
     }
+    public override List<Vector3> V_SetShape(Vector3 v)
+    {
+        List<Vector3> v_vector3 = new List<Vector3>();
+        if (flag == 1)
+        {
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y + 1.5f * Node.leng, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y + 0.5f * Node.leng, 0f));
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y - 0.5f * Node.leng, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y - 0.5f * Node.leng, 0f));
+        }
+        else if (flag == 2)
+        {
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 1.5f, v.y - Node.leng * 0.5f, 0f));
+        }
+        else if (flag == 3)
+        {
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y - Node.leng * 1.5f, 0f));
+        }
+        else if (flag == 4)
+        {
+            v_vector3.Add(new Vector3(v.x - Node.leng * 1.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+        }
+        return v_vector3;
+    }
     public override Vector3 GetPos()
     {
         Vector3 v = nodeList[0].GetPos();
@@ -531,6 +622,39 @@ public class T_Block : Block
             down_list.Add(nodeList[3]);//底层Node,必须要从左往右Add
         }
     }
+    public override List<Vector3> V_SetShape(Vector3 v)
+    {
+        List<Vector3> v_vector3 = new List<Vector3>();
+        if (flag == 1)
+        {
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 1.5f, v.y - Node.leng * 0.5f, 0f));
+        }
+        else if (flag == 2)
+        {
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 1.5f, v.y - Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 1.5f, 0f));
+        }
+        else if (flag == 3)
+        {
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 1.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+        }
+        else if (flag == 4)
+        {
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 1.5f, 0f));
+        }
+        return v_vector3;
+    }
     public override Vector3 GetPos()
     {
         Vector3 v = nodeList[0].GetPos();
@@ -649,6 +773,25 @@ public class S_Block : Block
             down_list.Add(nodeList[3]);//底层Node,必须要从左往右Add
         }
     }
+    public override List<Vector3> V_SetShape(Vector3 v)
+    {
+        List<Vector3> v_vector3 = new List<Vector3>();
+        if (flag == 1)
+        {
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 1.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+        }
+        else if (flag == 2)
+        {
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 1.5f, 0f));
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+        }
+        return v_vector3;
+    }
     public override Vector3 GetPos()
     {
         Vector3 v = nodeList[0].GetPos();
@@ -737,6 +880,25 @@ public class Z_Block : Block
             down_list.Add(nodeList[2]);//底层Node,必须要从左往右Add
         }
     }
+    public override List<Vector3> V_SetShape(Vector3 v)
+    {
+        List<Vector3> v_vector3 = new List<Vector3>();
+        if (flag == 1)
+        {
+            v_vector3.Add(new Vector3(v.x - Node.leng * 1.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+        }
+        else if (flag == 2)
+        {
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 1.5f, 0f));
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+            v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+        }
+        return v_vector3;
+    }
     public override Vector3 GetPos()
     {
         Vector3 v = nodeList[0].GetPos();
@@ -811,6 +973,17 @@ public class O_Block : Block
         nodeList[3].SetPos(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
         down_list.Add(nodeList[2]);//底层Node,必须要从左往右Add
         down_list.Add(nodeList[3]);//底层Node,必须要从左往右Add
+    }
+    public override List<Vector3> V_SetShape(Vector3 v)
+    {
+        List<Vector3> v_vector3 = new List<Vector3>();
+
+        v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+        v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y + Node.leng * 0.5f, 0f));
+        v_vector3.Add(new Vector3(v.x - Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+        v_vector3.Add(new Vector3(v.x + Node.leng * 0.5f, v.y - Node.leng * 0.5f, 0f));
+
+        return v_vector3;
     }
 
     public override List<Node> GetLeftNode()

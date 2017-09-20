@@ -9,8 +9,8 @@ public class Main : MonoBehaviour
     Button button_left;
     Button button_right;
     Button button_down;
-    float drop_speed = 200f;
-    float drop_speed_const = 200f;
+    float drop_speed = 120f;
+    float drop_speed_const = 120f;
 
     //1,2,3,4,5,6,7
     int t_type = 1;
@@ -20,8 +20,14 @@ public class Main : MonoBehaviour
     Block b;
 
     Frame f;
+
+    Text score;
+    long get_line_num = 0;
     void Start()
     {
+        score = transform.Find("ScoreBg/Score").GetComponent<Text>();
+        score.text = get_line_num.ToString();
+
         f = new Frame();
         button_rotate = transform.Find("Btn_Rotate").GetComponent<Button>();
         button_rotate.onClick.AddListener(delegate ()
@@ -69,7 +75,7 @@ public class Main : MonoBehaviour
             {
                 foreach (Node n in b.nodeList)
                 {
-                    int[] idx = f.GetFrameIndex(n.GetPos().x, n.GetPos().y);
+                    int[] idx = f.GetFrameIndex(n.GetPos().x, n.GetPos().y + Node.leng * 0.5f);
                     if (idx[1] >= f.high_size - 1)
                     {
                         ShowGameOver();
@@ -83,8 +89,11 @@ public class Main : MonoBehaviour
                     f.all_node[idx[0], idx[1]] = n;
                 }
 
-                if (f.DeleteLine())
+                int num = f.DeleteLine();
+                if (num > 0)
                 {
+                    get_line_num += num;
+                    UpdateScore();
                     is_dropping = false;
                 }
                 else
@@ -123,13 +132,22 @@ public class Main : MonoBehaviour
             OnClick_Rotate(null);
         }
     }
-
+    void UpdateScore()
+    {
+        if (get_line_num % 50 == 0)
+        {
+            drop_speed += 20f;
+            drop_speed_const += 20f;
+        }
+        score.text = get_line_num.ToString();
+    }
 
     bool is_normal_drop = true;
     bool IsDropEnd()
     {
         if (is_normal_drop)
         {
+            // string sss = "";
             for (int i = 0; i < b.down_list.Count; i++)
             {
                 Vector3 pos = b.down_list[i].GetPos();
@@ -141,7 +159,8 @@ public class Main : MonoBehaviour
                     return true;
                 }
 
-                int hi = GetCurHighFullFrame(x, y);
+                int hi = GetCurHighFullFrame(x, y + Node.leng * 0.5f);
+                // sss += ",hi=" + hi + ", y = " + y + "\n";
                 if (hi <= -1) continue;
 
                 if (y - Node.leng * 0.5f <= f.down_max_pos + (hi + 1) * Node.leng)
@@ -150,6 +169,7 @@ public class Main : MonoBehaviour
                     return true;
                 }
             }
+            // print(sss);
         }
         else
         {
@@ -266,7 +286,7 @@ public class Main : MonoBehaviour
         }
 
         b = CreateBlock(sc[rNum], rType);
-        // b = CreateBlock('J', 4);
+        // b = CreateBlock('I', 1);
         b.SetColor(Random.Range(1, 8));
         b.SetShape(new Vector3(0f, 600f, 0f));
         drop_speed = drop_speed_const;
@@ -292,8 +312,94 @@ public class Main : MonoBehaviour
         {
             b.flag = 1;
         }
-        b.SetShape(central_point);
+        int offset_x = Adjust_SetShape(central_point);
+        if (offset_x == 1000)
+        {
+            b.flag--;
+            if (b.flag < 1) b.flag = b.maxFlag;
+        }
+        else
+        {
+            b.SetShape(new Vector3(central_point.x + offset_x * Node.leng, central_point.y, 0f));
+        }
     }
+
+    /// <summary>
+    /// 调整 变换后水平位置
+    /// </summary>
+    /// <returns></returns>
+    int Adjust_SetShape(Vector3 central_point)
+    {
+        // print(central_point.x + ", " + central_point.y);
+        if (IsValidNode(central_point))
+        {
+            // Debug.LogWarning("合法旋转");
+            return 0;
+        }
+        else//右移一次
+        {
+            if (IsValidNode(new Vector3(central_point.x + Node.leng, central_point.y, 0f)))
+            {
+                // Debug.LogWarning("右移一次");
+                return 1;
+            }
+            else//再右移一次
+            {
+                if (IsValidNode(new Vector3(central_point.x + 2 * Node.leng, central_point.y, 0f)))
+                {
+                    // Debug.LogWarning("右移两次");
+                    return 2;
+                }
+                else//左移一次
+                {
+                    if (IsValidNode(new Vector3(central_point.x - Node.leng, central_point.y, 0f)))
+                    {
+                        // Debug.LogWarning("左移一次");
+                        return -1;
+                    }
+                    else//再左移一次
+                    {
+                        if (IsValidNode(new Vector3(central_point.x - 2 * Node.leng, central_point.y, 0f)))
+                        {
+                            // Debug.LogWarning("左移两次");
+                            return -2;
+                        }
+                        else
+                        {
+                            // Debug.LogWarning("不可旋转");
+                            return 1000;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// 判断指定坐标处生成的块中每一个Node位置是否合法
+    /// </summary>
+    /// <param name="central_point"></param>
+    /// <returns></returns>
+    bool IsValidNode(Vector3 central_point)
+    {
+        List<Vector3> v_vect = b.V_SetShape(central_point);
+        for (int i = 0; i < v_vect.Count; i++)
+        {
+            int[] idx = f.GetFrameIndex(v_vect[i].x, v_vect[i].y);
+            // Debug.LogWarning(idx[0] + ", " + idx[1]);
+            if (idx[1] >= f.high_size && idx[0] >= 0 && idx[0] < f.wide_size)
+            {
+                continue;
+            }
+            if (f.IsFullFrame(idx[0], idx[1]))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
     void OnClick_Left(GameObject o)
     {
         if (!is_normal_drop) return;
@@ -364,7 +470,7 @@ public class Main : MonoBehaviour
             }
         }
         is_normal_drop = false;
-        drop_speed *= 20f;
+        drop_speed = 4000f;
     }
 
     bool game_over = false;

@@ -30,8 +30,8 @@ public class Frame
     // 0-13
     public int[] GetFrameIndex(float x, float y)
     {
-        int h = (int)((x - left_max_pos) / 50);
-        int v = (int)((y - down_max_pos) / 50);
+        int h = (int)((x - (left_max_pos + Node.leng * 0.5f)) / 50);
+        int v = (int)((y - (down_max_pos + Node.leng * 0.5f)) / 50);
         return new int[2] { h, v };
     }
 
@@ -43,7 +43,7 @@ public class Frame
     }
 
     List<int> ready_down_flag = new List<int>();
-    public bool DeleteLine()
+    public int DeleteLine()
     {
         ready_down_flag.Clear();
         for (int j = 0; j < high_size; j++)
@@ -67,7 +67,7 @@ public class Frame
                 }
             }
         }
-        return ready_down_flag.Count > 0;
+        return ready_down_flag.Count;
     }
     public void DeleteLine_Drop()
     {
