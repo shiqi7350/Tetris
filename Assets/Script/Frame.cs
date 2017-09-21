@@ -4,11 +4,17 @@ using UnityEngine;
 
 public class Frame
 {
+
     public int wide_size = 14;
+
     public int high_size = 21;
+
     public float left_max_pos = -350f;
+
     public float right_max_pos = 350f;
+
     public float down_max_pos = -530f;
+
     public float up_max_pos = 520f;
 
     public Node[,] all_node;
@@ -28,12 +34,14 @@ public class Frame
     // 20
     // |
     // 0-13
+
     public int[] GetFrameIndex(float x, float y)
     {
         int h = (int)((x - (left_max_pos + Node.leng * 0.5f)) / 50);
         int v = (int)((y - (down_max_pos + Node.leng * 0.5f)) / 50);
         return new int[2] { h, v };
     }
+
 
 
     public bool IsFullFrame(int i, int j)
@@ -43,6 +51,7 @@ public class Frame
     }
 
     List<int> ready_down_flag = new List<int>();
+
     public int DeleteLine()
     {
         ready_down_flag.Clear();
@@ -69,6 +78,7 @@ public class Frame
         }
         return ready_down_flag.Count;
     }
+
     public void DeleteLine_Drop()
     {
         if (ready_down_flag.Count > 0)
